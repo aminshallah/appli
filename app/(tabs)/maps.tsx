@@ -1,16 +1,23 @@
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import Header from '@/components/Header' ;
-import Map from '@/components/Map';
+import React from 'react';
+import MapView from 'react-native-maps';
+import { StyleSheet, View } from 'react-native';
+import { PROVIDER_GOOGLE } from 'react-native-maps';
 
-export default function Maps (){
+
+export default function Maps() {
   return (
-    <ThemedView>
-      <Header />
-      <ThemedText>C'est la carte c'est la carte</ThemedText>
-      <Map />
-    </ThemedView>
-
-
-  )
+    <View style={styles.container}>
+      <MapView style={styles.map} provider={PROVIDER_GOOGLE} />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+});

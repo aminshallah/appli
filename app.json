@@ -24,8 +24,9 @@
         "googleMaps": {
           "apiKey": "AIzaSyC7UL9228evXhb56EN3odW1HyJZNYBHCpI"
         }
-    }
-  },
+      },
+      "package": "com.aminshallah.appli"
+    },
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -36,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1f6d497d-e959-4e2a-8981-92ac4e5f3801"
+      }
     }
   }
 }
