@@ -26,9 +26,36 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Explore',
+          title: 'Favoris',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={focused ? 'star' : 'star-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'calendar' : 'calendar-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="maps"
+        options={{
+          title: 'Maps',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'map' : 'map-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profil',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'menu' : 'menu-outline'} color={color} />
           ),
         }}
       />

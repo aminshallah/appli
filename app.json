@@ -4,13 +4,13 @@
     "slug": "appli",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2E4A8E"
     },
     "ios": {
       "supportsTablet": true
@@ -19,8 +19,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
-    },
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyC7UL9228evXhb56EN3odW1HyJZNYBHCpI"
+        }
+    }
+  },
     "web": {
       "bundler": "metro",
       "output": "static",
