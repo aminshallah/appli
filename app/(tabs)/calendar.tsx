@@ -12,266 +12,256 @@ import Element from '@/components/Element';
 import Element2 from '@/components/Element2';
 import { useNavigation } from '@react-navigation/native';
 
+export default function Calendar() {
+  const navigation = useNavigation();
 
-export default function Calendar(){
-  const navigation = useNavigation() ; 
-  const adr = {
-    id : '1',
-    genre: 'barspe',
-    name : 'BARSPE MUSEE',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '17',
-    endTime : '18',
-    duration : '1',
-    assos : ['adr'],
-    logo : 'adr',
-    description : ''
-  }
-  const wei = {
-    id : '2',
-    genre: 'acti',
-    name : 'ACTI WEI',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '12',
-    endTime : '13',
-    duration : '1',
-    assos : ['wei'],
-    logo : 'wei',
-    description : 'Vienakjhzmlfqsmlkjf qslmk jgslqmklmqskjdflqskdjf qlskf qlskfd lqskdfl kqsjfksj lfmksqlfkjsq mlfkjsq mkf qsmlkfj qlskj'
-  }
+  // Gestion des événements par jour
+  const eventsByDay = {
+    '2024-09-09': [
+      {
+        id: '1',
+        genre: 'barspe',
+        name: 'BARSPE MUSEE',
+        date: '2024-09-09',
+        location: 'Musée',
+        startTime: '17',
+        endTime: '18',
+        duration: '1',
+        assos: ['adr'],
+        logo: 'adr',
+        description: '',
+      },
+      {
+        id: '2',
+        genre: 'acti',
+        name: 'ACTI WEI',
+        date: '2024-09-09',
+        location: 'Musée',
+        startTime: '12',
+        endTime: '13',
+        duration: '1',
+        assos: ['wei'],
+        logo: 'wei',
+        description: 'Description de l\'activité.',
+      },
+    ],
+    '2024-09-10': [
+      {
+        id: '3',
+        genre: 'game',
+        name: 'Escape Game',
+        date: '2024-09-10',
+        location: 'Carré des sciences',
+        startTime: '10',
+        endTime: '12',
+        duration: '2',
+        assos: ['esc'],
+        logo: 'esc',
+        description: '',
+      },
+      {
+        id: '4',
+        genre: 'sport',
+        name: 'Tournoi de sport BDS',
+        date: '2024-09-10',
+        location: 'Plaine des sports',
+        startTime: '15',
+        endTime: '17',
+        duration: '2',
+        assos: ['bds'],
+        logo: 'bds',
+        description: '',
+      },
+    ],
+    '2024-09-11': [
+      {
+        id: '5',
+        genre: 'bar',
+        name: 'Barspé ForumxCU',
+        date: '2024-09-11',
+        location: 'Carré des sciences',
+        startTime: '14',
+        endTime: '16',
+        duration: '2',
+        assos: ['cu'],
+        logo: 'cu',
+        description: '',
+      },
+    ],
+    '2024-09-12': [
+      {
+        id: '6',
+        genre: 'beach',
+        name: 'Tournoi beach CheerUp',
+        date: '2024-09-12',
+        location: 'Derrière Rez 2C',
+        startTime: '16',
+        endTime: '18',
+        duration: '2',
+        assos: ['cheerup'],
+        logo: 'cheerup',
+        description: '',
+      },
+    ],
+  };
 
-  const ce = {
-    id : '3',
-    genre: 'gouter',
-    name : 'GOUTER CE',
-    date: '03/04/2004',
-    location : 'Carré des sciences',
-    startTime : '16',
-    endTime : '18',
-    duration : '2',
-    assos : ['ce'],
-    logo : 'ce',
-    description : ''
-  }
-
-  const voirie = {
-    id : '4',
-    genre: 'soiree',
-    name : 'NANAUTO ',
-    date: '03/04/2004',
-    location : 'Bouygues',
-    startTime : '22',
-    endTime : '2',
-    duration : '4',
-    assos : ['voirie'],
-    logo : 'voirie',
-    description : ''
-  }
-
-  
-  const vr = {
-    id : '5',
-    genre: 'acti',
-    name : 'LAN VR ',
-    date: '03/04/2004',
-    location : 'Terrasse Michelin',
-    startTime : '18',
-    endTime : '20',
-    duration : '2',
-    assos : ['vr'],
-    logo : 'vr',
-    description : ''
-  }
-
-
-  const elements = [adr,wei,ce,voirie,vr]
-
-  const [currentTime, setCurrentTime] = useState(new Date())
-  
-  useEffect (() => {
-    const interval = setInterval(() => {setCurrentTime(new Date());
-
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  },[])
-
-  const [hour, setHour] = useState(new Date().getHours());
-  const [showFilterOptions,setShowFilterOptions] = useState(false);
+  // État pour le jour sélectionné
+  const [selectedDay, setSelectedDay] = useState(Object.keys(eventsByDay)[0]); // Par défaut, le premier jour avec des événements
+  const [isGlobalView, setIsGlobalView] = useState(false);
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
-
-
-  const changeFilterOptions = () => {
-    return () => {
-      setShowFilterOptions(!showFilterOptions);
-      setShowSortOptions(false);
-    }
-  }
-  const changeSortOptions = () => {
-    return () => {
-      setShowSortOptions(!showSortOptions);
-      setShowFilterOptions(false);
-    }
-  }  
-
-  const [filteredElements, setFilteredElements] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
-
-  useEffect(() => {
-    const filtered = elements.filter((event) =>
-      filterOptions.length === 0 || filterOptions.includes(event.genre)
-    );
-    setFilteredElements(filtered);
-  }, [filterOptions]);
-
-  const [sortedElements, setSortedElements] = useState([]);
   const [sortOption, setSortOption] = useState('heure');
 
-  useEffect(() => {
-    let sorted = filteredElements ; 
-    if (sortOption === 'A-Z'){
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    }
-    if (sortOption === 'Z-A'){
-      sorted.sort((a, b) => b.name.localeCompare(a.name));
-    }
-    if (sortOption ===  'genre'){
-      sorted.sort((a, b) => a.genre.localeCompare(b.genre));
-    }
-    if (sortOption ===  'heure'){
-      sorted.sort((a, b) => (a.startTime-b.startTime));
-    }
-    setSortedElements(sorted);
+  const currentEvents = eventsByDay[selectedDay] || [];
+  const allEvents = Object.keys(eventsByDay).flatMap((date) => eventsByDay[date]);
 
-  })
+  // Change le jour sélectionné
+  const changeDay = (direction) => {
+    const newDate = new Date(selectedDay);
+    newDate.setDate(newDate.getDate() + direction);
+    setSelectedDay(newDate.toISOString().split('T')[0]);
+  };
 
-
-  const postEvent = async () => {
-    const eventData = {
-      genre: 'acti',
-    name : 'ACTI WEI',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '12',
-    endTime : '13',
-    duration : '1',
-    description : ''
-    };
-
-    try {
-        const response = await fetch('http://10.0.2.2:5000/api/events', {
-            method: 'POST', // Méthode de la requête
-            headers: {
-                'Content-Type': 'application/json' // Indique que les données sont au format JSON
-            },
-            body: JSON.stringify(eventData) // Convertit l'objet JavaScript en JSON
-        });
-
-        // Vérifie si la requête a réussi
-        if (!response.ok) {
-            throw new Error('Erreur lors de la création de l\'événement');
-        }
-
-        const data = await response.json(); // Parse la réponse JSON
-        console.log('Événement créé avec succès:', data);
-    } catch (error) {
-        console.error('Erreur:', error);
-    }
-};
-
-
-
-
-
-
-
-  let fullDate = currentTime.toLocaleString('fr-FR',{
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'});
-
-  let fullHour = currentTime.toLocaleString('fr-FR',{
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric'
-  })
+  // Tri des événements
+  const sortedElements = [...(isGlobalView ? allEvents : currentEvents)].sort((a, b) => {
+    if (sortOption === 'A-Z') return a.name.localeCompare(b.name);
+    if (sortOption === 'Z-A') return b.name.localeCompare(a.name);
+    if (sortOption === 'genre') return a.genre.localeCompare(b.genre);
+    if (sortOption === 'heure') return a.startTime - b.startTime;
+    return 0;
+  });
 
   
-
-
   return (
     <ThemedView style={styles.pageContainer}>
-    <StatusBar style="light"/>
-  <Header />
-  <ThemedView style ={styles.titleContainer}>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = "subtitle">{fullDate}</ThemedText>
-  </ThemedView>
-  <ThemedView style={styles.buttonContainer}>
-    <Button title='gauche' onPress={()=> setHour((hour -1+24)%24)}/>
-    <ThemedText style={styles.centeredText}>{hour}h - {hour +1}h </ThemedText>
-    <Button title='droite' onPress={()=> setHour((hour +1)%24)}/>
-  </ThemedView>
+      <StatusBar style="light" />
+      <Header />
 
-  <ThemedView style={styles.optionContainer}>
-    <ThemedText onPress={changeFilterOptions()}>Filtrer par {filterOptions}</ThemedText>
-    <ThemedText onPress={changeSortOptions()}>Trier par {sortOption}</ThemedText>
- 
-  </ThemedView>
-  {showFilterOptions&&(<Filters filterOptions ={filterOptions} onFilterChange={(option) => setFilterOptions((prev) => {
-          // Ajout ou retrait de l'option
-          if (prev.includes(option)) {
-            return prev.filter((item) => item !== option);
-          } else {
-            return [...prev, option];
+      {/* Conteneur des titres */}
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="title">WeildWeeks 2025</ThemedText>
+        {!isGlobalView && (
+          <ThemedText type="subtitle">
+            {new Date(selectedDay).toLocaleDateString('fr-FR', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+            })}
+          </ThemedText>
+        )}
+      </ThemedView>
+
+      {/* Navigation entre les jours */}
+      {!isGlobalView && (
+        <ThemedView style={styles.buttonContainer}>
+          <Button title="Jour précédent" onPress={() => changeDay(-1)} />
+          <Button title="Jour suivant" onPress={() => changeDay(1)} />
+        </ThemedView>
+      )}
+
+      {/* Options de tri et de filtre */}
+      <ThemedView style={styles.optionContainer}>
+        <ThemedView style={styles.buttonWrapper}>
+          <Button
+            title="Voir tous les événements"
+            onPress={() => navigation.navigate('GlobalView')}
+          />
+        </ThemedView>
+        <ThemedText
+          style={styles.optionText}
+          onPress={() => setShowFilterOptions(!showFilterOptions)}
+        >
+          Filtrer par {filterOptions.join(', ') || 'aucun'}
+        </ThemedText>
+        <ThemedText
+          style={styles.optionText}
+          onPress={() => setShowSortOptions(!showSortOptions)}
+        >
+          Trier par {sortOption}
+        </ThemedText>
+      </ThemedView>
+      
+
+      {/* Composants de filtre et de tri */}
+      {showFilterOptions && (
+        <Filters
+          filterOptions={filterOptions}
+          onFilterChange={(option) =>
+            setFilterOptions((prev) =>
+              prev.includes(option)
+                ? prev.filter((item) => item !== option)
+                : [...prev, option]
+            )
           }
-        })} />)}
-  {showSortOptions&&(<Sorts sortOption ={sortOption} onSortChange ={(option =>setSortOption(option))} />)}
-  <ScrollView>
-  <ThemedView>
-    {sortedElements.map(element => <Element2 key={element.id} element={element} onPress={() => navigation.navigate('eventDetail', { element })}/>)}
-  </ThemedView>
-  </ScrollView>
+        />
+      )}
+      {showSortOptions && (
+        <Sorts
+          sortOption={sortOption}
+          onSortChange={(option) => setSortOption(option)}
+        />
+      )}
 
-  </ThemedView>);
-
+      {/* Liste des événements */}
+      <ScrollView>
+        <ThemedView style={styles.eventListContainer}>
+          {sortedElements.map((event) => (
+            <Element2
+              key={event.id} // Correction de l'erreur de clé
+              element={event}
+              onPress={() =>
+                navigation.navigate('eventDetail', { event })
+              }
+            />
+          ))}
+        </ThemedView>
+      </ScrollView>
+    </ThemedView>
+  );
 }
 
 const styles = StyleSheet.create({
-  pageContainer : {
+  pageContainer: {
     backgroundColor: '#244B93',
     flex: 1,
-    //alignItems: 'flex-start'     // Couleur de fond de la page
   },
   titleContainer: {
-    flexDirection: 'column',      // Place les textes l'un au-dessus de l'autre
+    flexDirection: 'column',
     alignItems: 'center',
     gap: 8,
-    backgroundColor : 'transparent',
-    margin : 5,
+    backgroundColor: 'transparent',
+    margin: 10,
   },
-  buttonContainer : {
-    flexDirection : 'row',
-    backgroundColor : 'transparent',
-    alignItems : 'center',
-    gap: 15,
-  paddingHorizontal: 90
+  buttonContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginVertical: 10,
   },
-  centeredText: {
-    textAlign: 'center',
-    color: 'white',
+  optionContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    marginVertical: 10,
   },
-  optionContainer : {
-    flexDirection : 'row',
-    justifyContent : 'space-between',
-    backgroundColor : 'transparent',
-    margin: 15,
-    color : 'orange'
-  }
+  buttonWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+    marginVertical: 10,
+  },
+  optionText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginVertical: 5,
+    textDecorationLine: 'underline',
+  },
+  eventListContainer: {
+    marginVertical: 10,
+    paddingHorizontal: 10,
+  },
 });
