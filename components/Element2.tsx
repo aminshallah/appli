@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     backgroundColor: 'lightgrey',
+    borderRadius :20,
+    overflow : 'hidden',
   },
   reactLogo: {
     height: 80,                  // Hauteur augmentée pour remplir presque tout le container

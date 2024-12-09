@@ -8,85 +8,85 @@ import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header' ;
 import Filters from '@/components/Filters'; 
 import Sorts from '@/components/Sorts'; 
-import Element from '@/components/Element';
 import Element2 from '@/components/Element2';
 import { useNavigation } from '@react-navigation/native';
+const adr = {
+  id : '1',
+  genre: 'barspe',
+  name : 'BARSPE MUSEE',
+  date: '03/04/2004',
+  location : 'Musée',
+  startTime : '17',
+  endTime : '18',
+  duration : '1',
+  assos : ['adr'],
+  logo : 'adr',
+  description : ''
+}
+const wei = {
+  id : '2',
+  genre: 'acti',
+  name : 'ACTI WEI',
+  date: '03/04/2004',
+  location : 'Moulon',
+  startTime : '12',
+  endTime : '13',
+  duration : '1',
+  assos : ['wei'],
+  logo : 'wei',
+  description : 'Vienakjhzmlfqsmlkjf qslmk jgslqmklmqskjdflqskdjf qlskf qlskfd lqskdfl kqsjfksj lfmksqlfkjsq mlfkjsq mkf qsmlkfj qlskj'
+}
 
+const ce = {
+  id : '3',
+  genre: 'gouter',
+  name : 'GOUTER CE',
+  date: '03/04/2004',
+  location : 'Carré des sciences',
+  startTime : '16',
+  endTime : '18',
+  duration : '2',
+  assos : ['ce'],
+  logo : 'ce',
+  description : ''
+}
+
+const voirie = {
+  id : '4',
+  genre: 'soiree',
+  name : 'NANAUTO ',
+  date: '03/04/2004',
+  location : 'Bouygues',
+  startTime : '22',
+  endTime : '2',
+  duration : '4',
+  assos : ['voirie'],
+  logo : 'voirie',
+  description : ''
+}
+
+
+const vr = {
+  id : '5',
+  genre: 'acti',
+  name : 'LAN VR ',
+  date: '03/04/2004',
+  location : 'Bouygues',
+  startTime : '18',
+  endTime : '20',
+  duration : '2',
+  assos : ['vr'],
+  logo : 'vr',
+  description : ''
+}
+
+export const elements = [adr,wei,ce,voirie,vr]
 
 export default function Calendar(){
   const navigation = useNavigation() ; 
-  const adr = {
-    id : '1',
-    genre: 'barspe',
-    name : 'BARSPE MUSEE',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '17',
-    endTime : '18',
-    duration : '1',
-    assos : ['adr'],
-    logo : 'adr',
-    description : ''
-  }
-  const wei = {
-    id : '2',
-    genre: 'acti',
-    name : 'ACTI WEI',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '12',
-    endTime : '13',
-    duration : '1',
-    assos : ['wei'],
-    logo : 'wei',
-    description : 'Vienakjhzmlfqsmlkjf qslmk jgslqmklmqskjdflqskdjf qlskf qlskfd lqskdfl kqsjfksj lfmksqlfkjsq mlfkjsq mkf qsmlkfj qlskj'
-  }
-
-  const ce = {
-    id : '3',
-    genre: 'gouter',
-    name : 'GOUTER CE',
-    date: '03/04/2004',
-    location : 'Carré des sciences',
-    startTime : '16',
-    endTime : '18',
-    duration : '2',
-    assos : ['ce'],
-    logo : 'ce',
-    description : ''
-  }
-
-  const voirie = {
-    id : '4',
-    genre: 'soiree',
-    name : 'NANAUTO ',
-    date: '03/04/2004',
-    location : 'Bouygues',
-    startTime : '22',
-    endTime : '2',
-    duration : '4',
-    assos : ['voirie'],
-    logo : 'voirie',
-    description : ''
-  }
-
   
-  const vr = {
-    id : '5',
-    genre: 'acti',
-    name : 'LAN VR ',
-    date: '03/04/2004',
-    location : 'Terrasse Michelin',
-    startTime : '18',
-    endTime : '20',
-    duration : '2',
-    assos : ['vr'],
-    logo : 'vr',
-    description : ''
-  }
 
-
-  const elements = [adr,wei,ce,voirie,vr]
+ 
 
   const [currentTime, setCurrentTime] = useState(new Date())
   
