@@ -95,6 +95,8 @@ const styles = StyleSheet.create({
     color: '#E79140',
     fontWeight: 'bold',
     marginBottom: 4,             // Espace entre le titre et les détails
+    maxWidth: '100%', // Empêche le texte de dépasser
+    overflow: 'hidden', // Cache tout texte dépassant les limites
   },
   iconContainer :{
     flex : 1,

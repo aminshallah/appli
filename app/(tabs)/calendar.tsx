@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: 'transparent',
     margin: 10,
+    
   },
   buttonContainer: {
     flexDirection: 'row',
