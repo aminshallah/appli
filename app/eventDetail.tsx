@@ -8,7 +8,7 @@ import { useRoute } from '@react-navigation/native';
 
 export default function eventDetail() {
   const route = useRoute();
-  const { element } = route.params;
+  const { elements } = route.params;
 
   const images = {
     adr: require('@/assets/images/adr.png'),
@@ -23,7 +23,7 @@ export default function eventDetail() {
     <ThemedView style={styles.screen}>
       <ThemedView style={styles.headerContainer}>
       <ThemedView style={styles.imageContainer}>
-        {element.assos.map((assos, index) => (
+        {elements.assos.map((assos, index) => (
           <Image key={index} source={images[assos]} style={styles.associationLogo} />
         ))}
       </ThemedView>

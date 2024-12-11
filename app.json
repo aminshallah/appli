@@ -13,7 +13,8 @@
       "backgroundColor": "#2E4A8E"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aminshallah.appli"
     },
     "android": {
       "adaptiveIcon": {

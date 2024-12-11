@@ -1,112 +1,103 @@
-import { Image, StyleSheet, Platform, Button, ScrollView,  } from 'react-native';
-import {StatusBar} from 'expo-status-bar';
-import { useState, useEffect } from 'react';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { Image, StyleSheet, Platform, Button, ScrollView } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import Header from '@/components/Header' ;
-import Filters from '@/components/Filters'; 
-import Sorts from '@/components/Sorts'; 
-import Element from '@/components/Element';
+import Header from '@/components/Header';
+import Filters from '@/components/Filters';
+import Sorts from '@/components/Sorts';
 import Element2 from '@/components/Element2';
 import { useNavigation } from '@react-navigation/native';
+
+// Définition des événements
+const adr = {
+  id: '1',
+  genre: 'barspe',
+  name: 'BARSPE MUSEE',
+  date: '03/04/2004',
+  location: 'Musée',
+  startTime: '17',
+  endTime: '18',
+  duration: '1',
+  assos: ['adr'],
+  logo: 'adr',
+  description: '',
+};
+const wei = {
+  id: '2',
+  genre: 'acti',
+  name: 'ACTI WEI',
+  date: '03/04/2004',
+  location: 'Moulon',
+  startTime: '12',
+  endTime: '13',
+  duration: '1',
+  assos: ['wei'],
+  logo: 'wei',
+  description: 'Description de l\'activité.',
+};
+const ce = {
+  id: '3',
+  genre: 'gouter',
+  name: 'GOUTER CE',
+  date: '03/04/2004',
+  location: 'Carré des sciences',
+  startTime: '16',
+  endTime: '18',
+  duration: '2',
+  assos: ['ce'],
+  logo: 'ce',
+  description: '',
+};
+const voirie = {
+  id: '4',
+  genre: 'soiree',
+  name: 'NANAUTO',
+  date: '03/04/2004',
+  location: 'Bouygues',
+  startTime: '22',
+  endTime: '2',
+  duration: '4',
+  assos: ['voirie'],
+  logo: 'voirie',
+  description: '',
+};
+const vr = {
+  id: '5',
+  genre: 'acti',
+  name: 'LAN VR',
+  date: '03/04/2004',
+  location: 'Bouygues',
+  startTime: '18',
+  endTime: '20',
+  duration: '2',
+  assos: ['vr'],
+  logo: 'vr',
+  description: '',
+};
+
+export const elements = [adr, wei, ce, voirie, vr];
+
+// Fonction pour regrouper les événements par jour
+const groupEventsByDate = (events) => {
+  return events.reduce((acc, event) => {
+    const date = event.date; // Utiliser la date de l'événement
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(event); // Ajouter l'événement sous la clé correspondant à la date
+    return acc;
+  }, {});
+};
 
 export default function Calendar() {
   const navigation = useNavigation();
 
-  // Gestion des événements par jour
-  const eventsByDay = {
-    '2024-09-09': [
-      {
-        id: '1',
-        genre: 'barspe',
-        name: 'BARSPE MUSEE',
-        date: '2024-09-09',
-        location: 'Musée',
-        startTime: '17',
-        endTime: '18',
-        duration: '1',
-        assos: ['adr'],
-        logo: 'adr',
-        description: '',
-      },
-      {
-        id: '2',
-        genre: 'acti',
-        name: 'ACTI WEI',
-        date: '2024-09-09',
-        location: 'Musée',
-        startTime: '12',
-        endTime: '13',
-        duration: '1',
-        assos: ['wei'],
-        logo: 'wei',
-        description: 'Description de l\'activité.',
-      },
-    ],
-    '2024-09-10': [
-      {
-        id: '3',
-        genre: 'game',
-        name: 'Escape Game',
-        date: '2024-09-10',
-        location: 'Carré des sciences',
-        startTime: '10',
-        endTime: '12',
-        duration: '2',
-        assos: ['esc'],
-        logo: 'esc',
-        description: '',
-      },
-      {
-        id: '4',
-        genre: 'sport',
-        name: 'Tournoi de sport BDS',
-        date: '2024-09-10',
-        location: 'Plaine des sports',
-        startTime: '15',
-        endTime: '17',
-        duration: '2',
-        assos: ['bds'],
-        logo: 'bds',
-        description: '',
-      },
-    ],
-    '2024-09-11': [
-      {
-        id: '5',
-        genre: 'bar',
-        name: 'Barspé ForumxCU',
-        date: '2024-09-11',
-        location: 'Carré des sciences',
-        startTime: '14',
-        endTime: '16',
-        duration: '2',
-        assos: ['cu'],
-        logo: 'cu',
-        description: '',
-      },
-    ],
-    '2024-09-12': [
-      {
-        id: '6',
-        genre: 'beach',
-        name: 'Tournoi beach CheerUp',
-        date: '2024-09-12',
-        location: 'Derrière Rez 2C',
-        startTime: '16',
-        endTime: '18',
-        duration: '2',
-        assos: ['cheerup'],
-        logo: 'cheerup',
-        description: '',
-      },
-    ],
-  };
+  // Groupement des événements
+  const eventsByDay = groupEventsByDate(elements);
 
   // État pour le jour sélectionné
-  const [selectedDay, setSelectedDay] = useState(Object.keys(eventsByDay)[0]); // Par défaut, le premier jour avec des événements
+  const [selectedDay, setSelectedDay] = useState(Object.keys(eventsByDay)[0]); // Par défaut, le premier jour
   const [isGlobalView, setIsGlobalView] = useState(false);
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
@@ -118,9 +109,10 @@ export default function Calendar() {
 
   // Change le jour sélectionné
   const changeDay = (direction) => {
-    const newDate = new Date(selectedDay);
-    newDate.setDate(newDate.getDate() + direction);
-    setSelectedDay(newDate.toISOString().split('T')[0]);
+    const dates = Object.keys(eventsByDay).sort(); // Trier les dates
+    const currentIndex = dates.indexOf(selectedDay);
+    const newIndex = Math.max(0, Math.min(dates.length - 1, currentIndex + direction));
+    setSelectedDay(dates[newIndex]);
   };
 
   // Tri des événements
@@ -132,7 +124,6 @@ export default function Calendar() {
     return 0;
   });
 
-  
   return (
     <ThemedView style={styles.pageContainer}>
       <StatusBar style="light" />
@@ -165,7 +156,7 @@ export default function Calendar() {
         <ThemedView style={styles.buttonWrapper}>
           <Button
             title="Voir tous les événements"
-            onPress={() => navigation.navigate('GlobalView')}
+            onPress={() => setIsGlobalView(!isGlobalView)}
           />
         </ThemedView>
         <ThemedText
@@ -181,34 +172,13 @@ export default function Calendar() {
           Trier par {sortOption}
         </ThemedText>
       </ThemedView>
-      
-
-      {/* Composants de filtre et de tri */}
-      {showFilterOptions && (
-        <Filters
-          filterOptions={filterOptions}
-          onFilterChange={(option) =>
-            setFilterOptions((prev) =>
-              prev.includes(option)
-                ? prev.filter((item) => item !== option)
-                : [...prev, option]
-            )
-          }
-        />
-      )}
-      {showSortOptions && (
-        <Sorts
-          sortOption={sortOption}
-          onSortChange={(option) => setSortOption(option)}
-        />
-      )}
 
       {/* Liste des événements */}
       <ScrollView>
         <ThemedView style={styles.eventListContainer}>
           {sortedElements.map((event) => (
             <Element2
-              key={event.id} // Correction de l'erreur de clé
+              key={event.id}
               element={event}
               onPress={() =>
                 navigation.navigate('eventDetail', { event })
@@ -232,7 +202,6 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: 'transparent',
     margin: 10,
-    
   },
   buttonContainer: {
     flexDirection: 'row',
