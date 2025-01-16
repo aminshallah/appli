@@ -51,6 +51,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name = "shotgun"
+        options={{
+          title: 'Shotgun',
+          tabBarIcon: ({color, focused}) => (
+            <TabBarIcon name={focused ? 'ticket' : 'ticket-outline'} color={color} />
+          ),
+        }}
+        />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profil',
