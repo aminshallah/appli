@@ -1,31 +1,21 @@
 {
   "expo": {
-    "name": "appli",
-    "slug": "appli",
+    "name": "mywei",
+    "slug": "mywei",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
-    "scheme": "myapp",
+    "icon": "./assets/images/icon.png",
+    "scheme": "mywei",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#2E4A8E"
-    },
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyC7UL9228evXhb56EN3odW1HyJZNYBHCpI"
-        }
-      },
-      "package": "com.aminshallah.appli"
+        "foregroundImage": "./assets/images/logo.png",
+        "backgroundColor": "#244B93"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -33,18 +23,19 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#244B93"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "1f6d497d-e959-4e2a-8981-92ac4e5f3801"
-      }
     }
   }
 }
