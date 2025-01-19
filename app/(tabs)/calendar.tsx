@@ -208,9 +208,6 @@ export default function Calendar(){
   <Header />
   <ThemedView style ={styles.titleContainer}>
   <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
   <ThemedText type = "subtitle">{fullDate}</ThemedText>
   </ThemedView>
   <ThemedView style={styles.buttonContainer}>
