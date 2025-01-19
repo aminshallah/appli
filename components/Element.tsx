@@ -1,25 +1,75 @@
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity  } from 'react-native';
+import {useState, useEffect} from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-export default function Element() {
+
+const DEFAULT_ELEMENT_VALUES = {
+  id : '',
+  genre: '',
+  name : '',
+  date: '',
+  location : '',
+  startTime : '',
+  endTime : '',
+  duration : '',
+  assos : '',
+  logo : '',
+  description : ''
+};
+
+const images = {
+  adr : require('@/assets/images/adr.png'),
+  wei : require('@/assets/images/wei.png'),
+  ce : require('@/assets/images/ce.png'),
+  voirie : require('@/assets/images/voirie.png'),
+  vr : require('@/assets/images/vr.png'),
+}
+
+export default function Element({element, onPress}) {
+  
+  const [elementValue, setElementValue] = useState(DEFAULT_ELEMENT_VALUES);
+
+  useEffect( () => {
+    setElementValue({
+      id : '',
+      genre : element.genre,
+      name : element.name,
+      date : element.date,
+      location : element.location,
+      startTime : element.startTime,
+      endTime : element.endTime,
+      duration : element.duration,
+      assos : element.assos,
+      logo : element.logo,
+      description : element.description
+    })
+  },[element]);
+
+
+
+
   return (
-    <ThemedView style={styles.container}>
-      <Image
-        source={require('@/assets/images/logo.png')}
+    
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+
+
+      {(element.assos).map((assos =>(
+        <Image source={images[assos]}
         style={styles.reactLogo}
       />
+      )))}
       <ThemedView style={styles.textContainer}>
-        <ThemedText type='title' style={styles.titleText}>Acti WEI</ThemedText>
+        <ThemedText type='title' style={styles.titleText}>{element.name}</ThemedText>
         
-        <ThemedText> <Ionicons name="time-outline" size={22} color="orange" />18h-19h</ThemedText>
-        <ThemedText><Ionicons name="navigate-outline" size={22} color="orange" />Carré des sciences</ThemedText>
+        <ThemedText> <Ionicons name="time-outline" size={22} color="orange" />{element.startTime}h-{element.endTime}h</ThemedText>
+        <ThemedText><Ionicons name="navigate-outline" size={22} color="orange" />{element.location}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.iconContainer}>
       <Ionicons name="star" size={32} color="orange" />
       </ThemedView>
-    </ThemedView>
+    </TouchableOpacity>
   );
 };
 
@@ -30,6 +80,8 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     backgroundColor: 'lightgrey',
+    borderRadius :20,
+    overflow : 'hidden',
   },
   reactLogo: {
     height: 80,                  // Hauteur augmentée pour remplir presque tout le container

@@ -10,7 +10,7 @@ export default function Header() {
         source={require('@/assets/images/logo.png')}
         style={styles.reactLogo}
       />
-      <ThemedText type="title">WEI 2024 CENTRALESUPELEC </ThemedText>
+      <ThemedText style={styles.title}>WEI CENTRALESUPELEC </ThemedText>
     </ThemedView>
     </SafeAreaView>
   );
@@ -20,17 +20,20 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',        // Aligne le texte et l'image en ligne
     alignItems: 'center',         // Centre le contenu verticalement
-    padding: 10,                  // Ajoute un léger padding pour éviter que l'en-tête soit trop haut
     backgroundColor: '#244B93',
-    paddingTop: 50,
-    color : "#E79140"
+    paddingTop: 25,
   },
   safeContainer: {
     backgroundColor: '#244B93',     // Assure que la couleur de fond couvre tout
   },
   reactLogo: {
-    height: 50,                   // Réduit la taille du logo
-    width: 50,                    // Assure que le logo reste proportionnel
+    height: 60,                   // Réduit la taille du logo
+    width: 60,                    // Assure que le logo reste proportionnel
     marginRight: 10,              // Espace entre le logo et le texte
   },
+  title : {
+    color : '#E79140',
+    fontWeight : 'bold',
+    fontSize: 25,
+  }
 });

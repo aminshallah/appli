@@ -3,6 +3,9 @@ import { StyleSheet, Button, ScrollView, View, Linking } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header';
+import { useContext, useEffect } from 'react';
+import UserProvider, { UserContext } from '@/contexts/UserContext'
+import Profil from '@/components/Profil'
 
 export default function Profile() {
   const familyName = "Famille des Dragons";
@@ -16,6 +19,15 @@ export default function Profile() {
     { id: 2, name: "Sortie Bowling", date: "22/12/2024" },
   ];
   const familyRanking = { position: 3, points: 120 };
+  const { user } = useContext(UserContext)
+  console.log(user)
+
+  useEffect(() => {
+    if (user) {
+      console.log("Données utilisateur mises à jour:", user);
+      // Tu peux ici effectuer des actions supplémentaires si nécessaire
+    }
+  }, [user]);
 
   // Lien vers le groupe WhatsApp
   const whatsappGroupLink = "https://chat.whatsapp.com/your-group-id";
@@ -34,7 +46,7 @@ export default function Profile() {
       <Header />
       <ScrollView>
         <ThemedView style={styles.profileSection}>
-          <ThemedText style={styles.userName}>Nom de l'utilisateur</ThemedText>
+          <Profil />
         </ThemedView>
 
         <ThemedView style={styles.card}>
@@ -84,7 +96,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#244B93',
   },
   profileSection: {
     alignItems: 'center',

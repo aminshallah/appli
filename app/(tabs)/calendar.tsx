@@ -1,15 +1,10 @@
-import { Image, StyleSheet, Platform, Button, ScrollView,  } from 'react-native';
-import {StatusBar} from 'expo-status-bar';
+import { StyleSheet, SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header' ;
-import Filters from '@/components/Filters'; 
-import Sorts from '@/components/Sorts'; 
-import Element2 from '@/components/Element2';
-import { useNavigation } from '@react-navigation/native';
+import Visionneuse from '@/components/Visionneuse';
+
 const adr = {
   id : '1',
   genre: 'barspe',
@@ -82,193 +77,141 @@ const vr = {
 
 export const elements = [adr,wei,ce,voirie,vr]
 
-export default function Calendar(){
-  const navigation = useNavigation() ; 
-  
+export default function Calendrier() {
+  const weeks = [
+    ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+    ['28', '29', '30', '31', '1', '2', '3'],
+    ['4', '5', '6', '7', '8', '9', '10'],
+    ['11', '12', '13', '14', '15', '16', '17'],
+  ];
 
- 
-
+  const outOfMonthDays = ['28', '29', '30', '31'];
+  const [selectedDay, setSelectedDay] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date())
-  
-  useEffect (() => {
-    const interval = setInterval(() => {setCurrentTime(new Date());
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [day, setDay] = useState(new Date().getDate());
 
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  },[])
-
-  const [hour, setHour] = useState(new Date().getHours());
-  const [showFilterOptions,setShowFilterOptions] = useState(false);
-  const [showSortOptions, setShowSortOptions] = useState(false);
-
-
-  const changeFilterOptions = () => {
-    return () => {
-      setShowFilterOptions(!showFilterOptions);
-      setShowSortOptions(false);
-    }
-  }
-  const changeSortOptions = () => {
-    return () => {
-      setShowSortOptions(!showSortOptions);
-      setShowFilterOptions(false);
-    }
-  }  
-
-  const [filteredElements, setFilteredElements] = useState([]);
-  const [filterOptions, setFilterOptions] = useState([]);
-
-  useEffect(() => {
-    const filtered = elements.filter((event) =>
-      filterOptions.length === 0 || filterOptions.includes(event.genre)
-    );
-    setFilteredElements(filtered);
-  }, [filterOptions]);
-
-  const [sortedElements, setSortedElements] = useState([]);
-  const [sortOption, setSortOption] = useState('heure');
-
-  useEffect(() => {
-    let sorted = filteredElements ; 
-    if (sortOption === 'A-Z'){
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    }
-    if (sortOption === 'Z-A'){
-      sorted.sort((a, b) => b.name.localeCompare(a.name));
-    }
-    if (sortOption ===  'genre'){
-      sorted.sort((a, b) => a.genre.localeCompare(b.genre));
-    }
-    if (sortOption ===  'heure'){
-      sorted.sort((a, b) => (a.startTime-b.startTime));
-    }
-    setSortedElements(sorted);
-
-  })
-
-
-  const postEvent = async () => {
-    const eventData = {
-      genre: 'acti',
-    name : 'ACTI WEI',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '12',
-    endTime : '13',
-    duration : '1',
-    description : ''
-    };
-
-    try {
-        const response = await fetch('http://10.0.2.2:5000/api/events', {
-            method: 'POST', // Méthode de la requête
-            headers: {
-                'Content-Type': 'application/json' // Indique que les données sont au format JSON
-            },
-            body: JSON.stringify(eventData) // Convertit l'objet JavaScript en JSON
-        });
-
-        // Vérifie si la requête a réussi
-        if (!response.ok) {
-            throw new Error('Erreur lors de la création de l\'événement');
-        }
-
-        const data = await response.json(); // Parse la réponse JSON
-        console.log('Événement créé avec succès:', data);
-    } catch (error) {
-        console.error('Erreur:', error);
-    }
-};
-
-
-
-
-
-
-
-  let fullDate = currentTime.toLocaleString('fr-FR',{
+  const date = currentTime.toLocaleString('fr-FR',{
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric'});
 
-  let fullHour = currentTime.toLocaleString('fr-FR',{
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric'
-  })
-
-  
+    console.log(date)
+    console.log(currentTime)
 
 
-  return (
-    <ThemedView style={styles.pageContainer}>
-    <StatusBar style="light"/>
-  <Header />
-  <ThemedView style ={styles.titleContainer}>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = "subtitle">{fullDate}</ThemedText>
-  </ThemedView>
-  <ThemedView style={styles.buttonContainer}>
-    <Button title='gauche' onPress={()=> setHour((hour -1+24)%24)}/>
-    <ThemedText style={styles.centeredText}>{hour}h - {hour +1}h </ThemedText>
-    <Button title='droite' onPress={()=> setHour((hour +1)%24)}/>
-  </ThemedView>
+    console.log(month)
 
-  <ThemedView style={styles.optionContainer}>
-    <ThemedText onPress={changeFilterOptions()}>Filtrer par {filterOptions}</ThemedText>
-    <ThemedText onPress={changeSortOptions()}>Trier par {sortOption}</ThemedText>
- 
-  </ThemedView>
-  {showFilterOptions&&(<Filters filterOptions ={filterOptions} onFilterChange={(option) => setFilterOptions((prev) => {
-          // Ajout ou retrait de l'option
-          if (prev.includes(option)) {
-            return prev.filter((item) => item !== option);
-          } else {
-            return [...prev, option];
-          }
-        })} />)}
-  {showSortOptions&&(<Sorts sortOption ={sortOption} onSortChange ={(option =>setSortOption(option))} />)}
-  <ScrollView>
-  <ThemedView>
-    {sortedElements.map(element => <Element2 key={element.id} element={element} onPress={() => navigation.navigate('eventDetail', { element })}/>)}
-  </ThemedView>
-  </ScrollView>
+    useEffect(() => {if (month==9){
+      setSelectedDay(day)
+    } },[selectedDay])
 
-  </ThemedView>);
+    console.log(selectedDay)
+    console.log(selectedDay)
 
-}
+    console.log(selectedDay, date)
 
+
+
+    const handleDayPress = (day) => {
+      if (!outOfMonthDays.includes(day)) {
+        setSelectedDay(parseInt(day));  // Assure-toi de convertir en entier
+      }
+    };
+    
+    return (
+      <SafeAreaView style={styles.container}>
+        <Header />
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.title}>Weild Weeks 2025</ThemedText>
+          <View style={styles.calendar}>
+            <View style={styles.weekRow}>
+              {weeks[0].map((day, index) => (
+                <Text key={index} style={styles.dayHeader}>
+                  {day}
+                </Text>
+              ))}
+            </View>
+    
+            {weeks.slice(1).map((week, weekIndex) => (
+              <View key={weekIndex} style={styles.weekRow}>
+                {week.map((date, dateIndex) => (
+                  <TouchableOpacity
+                    key={dateIndex}
+                    onPress={() => handleDayPress(date)}
+                    disabled={outOfMonthDays.includes(date)}
+                    style={[
+                      styles.dayContainer,
+                      selectedDay === parseInt(date) && styles.selectedDayContainer,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.day,
+                        outOfMonthDays.includes(date) && styles.outOfMonthDay,
+                        selectedDay === parseInt(date) && styles.selectedDayText,
+                      ]}
+                    >
+                      {date}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))}
+          </View>
+          <Visionneuse elements={elements} />
+        </ThemedView>
+      </SafeAreaView>
+    )}
+    
 const styles = StyleSheet.create({
-  pageContainer : {
-    backgroundColor: '#244B93',
+  container: {
     flex: 1,
-    //alignItems: 'flex-start'     // Couleur de fond de la page
+    backgroundColor: '#244B93',
   },
-  titleContainer: {
-    flexDirection: 'column',      // Place les textes l'un au-dessus de l'autre
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor : 'transparent',
-    margin : 5,
+  title: {
+    color: 'orange',
+    alignSelf: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 8, // Réduction de l'écart sous le titre
   },
-  buttonContainer : {
-    flexDirection : 'row',
-    backgroundColor : 'transparent',
-    alignItems : 'center',
-    gap: 15,
-  paddingHorizontal: 90
+  calendar: {
+    backgroundColor: '#4A69A2',
+    borderRadius: 10,
+    padding: 8, // Réduction du padding global
+    marginHorizontal: 20,
   },
-  centeredText: {
-    textAlign: 'center',
+  weekRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 3, // Réduction de l'écart entre les lignes
+  },
+  dayHeader: {
     color: 'white',
+    fontSize: 11, // Réduction de la taille du texte
+    fontWeight: 'bold',
   },
-  optionContainer : {
-    flexDirection : 'row',
-    justifyContent : 'space-between',
-    backgroundColor : 'transparent',
-    margin: 15,
-    color : 'orange'
-  }
+  dayContainer: {
+    paddingVertical: 3, // Réduction du padding vertical
+    borderRadius: 12, // Ajustement pour un look plus compact
+  },
+  day: {
+    color: 'white',
+    fontSize: 12, // Réduction de la taille du texte
+    textAlign: 'center',
+    width: 25, // Réduction de la largeur
+    fontWeight :'bold',
+  },
+  selectedDayContainer: {
+    backgroundColor: 'orange',
+  },
+  selectedDayText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  outOfMonthDay: {
+    color: 'grey',
+  },
 });
