@@ -37,4 +37,34 @@ router.delete('/:id', (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 });
 
+router.put('/current', async (req, res) => {
+    const { id } = req.body;
+  
+    if (!id) {
+        return res.status(400).json({ error: "L'ID du shotgun doit être fourni." });
+    }
+      
+    try {
+      await Shotgun.updateMany({}, { $set: { currentShotgun: false } });
+  
+      const updatedShotgun = await Shotgun.findByIdAndUpdate(
+        id,
+        { $set: { currentShotgun: true } },
+        { new: true } // Retourne le document mis à jour
+      );
+  
+      if (!updatedShotgun) {
+        return res.status(404).json({ error: "Shotgun avec l'ID spécifié introuvable." });
+      }
+  
+      return res.status(200).json({
+        message: "Le shotgun actuel a été mis à jour avec succès.",
+        updatedShotgun,
+      });
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour des shotguns :", error);
+      return res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour des shotguns." });
+    }
+  });  
+
 module.exports = router;

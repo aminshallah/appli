@@ -5,6 +5,7 @@ const shotgunSchema = mongoose.Schema({
     description: {type: String, required: false, default: ''},
     places: {type: Number, required: true},
     participants: {type: Array, required: false},
+    currentShotgun: {type: Boolean, default: false},
 });
 
 module.exports = mongoose.model('Shotgun', shotgunSchema);

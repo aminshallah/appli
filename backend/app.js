@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const shotgunRoutes = require('./routes/shotgun');
 const eventRoutes = require('./routes/event');
+const userRoutes = require('./routes/user');
 
 const app = express();
 mongoose.connect('mongodb+srv://noe:6bm9blTtQCAdS6YI@wei-cs.lzblm.mongodb.net/?retryWrites=true&w=majority&appName=WEI-CS')
@@ -9,8 +10,9 @@ mongoose.connect('mongodb+srv://noe:6bm9blTtQCAdS6YI@wei-cs.lzblm.mongodb.net/?r
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 app.use(express.json());
 
-app.use('/api/shotguns', shotgunRoutes);
-app.use('/api/events', eventRoutes);
+app.use('/api/shotgun', shotgunRoutes);
+app.use('/api/event', eventRoutes);
+app.use('/api/user', userRoutes);
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
