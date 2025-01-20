@@ -4,6 +4,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header' ;
 import Visionneuse from '@/components/Visionneuse';
+import axios from 'axios';
+
+const getSelectedDate = (selectedDay) => {
+  const date = new Date(2025, 8, selectedDay); // Crée une date avec le mois (0-indexed) et le jour
+  return date.toISOString().split('T')[0]; // Format ISO 8601 : YYYY-MM-DD
+};
 
 const adr = {
   id : '1',
@@ -90,6 +96,7 @@ export default function Calendrier() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [month, setMonth] = useState(new Date().getMonth());
   const [day, setDay] = useState(new Date().getDate());
+  const [eventsFetched, setEventsFetched] = useState([])
 
   const date = currentTime.toLocaleString('fr-FR',{
     weekday: 'long',
@@ -107,10 +114,26 @@ export default function Calendrier() {
       setSelectedDay(day)
     } },[selectedDay])
 
+    useEffect(() => {
+      if (selectedDay) {
+        const selectedDate = getSelectedDate(selectedDay, month, currentTime.getFullYear());
+
     console.log(selectedDay)
     console.log(selectedDay)
 
     console.log(selectedDay, date)
+    axios
+      .get(`http://localhost:3000/api/event/by-date?date=${selectedDate}`) // URL du backend
+      .then((response) => {
+        console.log('Événements récupérés :', response.data.events);
+        setEventsFetched(response.data.events)
+        // Stocke les événements dans un state
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la récupération des événements :', error.message);
+      });
+  }
+}, [selectedDay]);
 
 
 
@@ -119,6 +142,7 @@ export default function Calendrier() {
         setSelectedDay(parseInt(day));  // Assure-toi de convertir en entier
       }
     };
+
     
     return (
       <SafeAreaView style={styles.container}>
@@ -160,7 +184,8 @@ export default function Calendrier() {
               </View>
             ))}
           </View>
-          <Visionneuse elements={elements} />
+          <Text>{eventsFetched.length} évenements ce jour ci </Text>
+          <Visionneuse elements={eventsFetched} />
         </ThemedView>
       </SafeAreaView>
     )}

@@ -10,6 +10,31 @@ router.get('/' + '', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
   });
+
+
+  router.get('/by-date', async (req, res) => {
+    const { date } = req.query; // La date est envoyée comme paramètre de requête
+    if (!date) {
+        return res.status(400).json({ error: 'Une date est requise.' });
+    }
+
+    try {
+        const givenDate = new Date(date);
+        const nextDay = new Date(givenDate);
+        nextDay.setDate(givenDate.getDate() + 1);
+
+        const events = await Event.find({
+            date: {
+                $gte: givenDate,
+                $lt: nextDay
+            }
+        });
+
+        res.json({ events });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
   
 router.post('/', async (req, res) => {
     const { genre, name, date, location, startTime, endTime, duration, description } = req.body;
