@@ -8,11 +8,11 @@ import { Picker } from '@react-native-picker/picker';
 export default function Shotgun (){
   const [message, setMessage] = useState('');
   const [inputName, setInputName] = useState('');
-  const [inputShotgun, setInputShotgun] = useState('');
   const [inputSeats, setInputSeats] = useState('');
+  const [inputDescription, setInputDescripttion] = useState('');
   const [seatsLeft, setSeatsLeft] = useState('');
   const [participants, setParticipants] = useState('');
-  const [role, setRole] = useState('admin'); // admin, chefDeFamille, membre, ou nonConnecte
+  const [role, setRole] = useState('admin');
   const [isConnected, setIsConnected] = useState(true);
   const [chef, setChef] = useState(true);
   const [shotgunSuccess, setShotgunSuccess] = useState(false); // Pour savoir si le shotgun a réussi
@@ -105,15 +105,12 @@ export default function Shotgun (){
   };
 
   const creer = () => {
-    const shotgunName = inputShotgun
-    const seats = inputSeats
-
     fetch('http://localhost:3000/api/shotguns/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ "nom": shotgunName, "places": inputSeats }),
+      body: JSON.stringify({ "nom": inputName, "places": inputSeats }),
     })
     .then((response) => {
       if (!response.ok) {
@@ -192,9 +189,7 @@ export default function Shotgun (){
     if (role === 'admin') {
       return (
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#2E4A8E', padding: 20 }}>
-          {/* Section des participants */}
           <View style={{ width: '100%', alignItems: 'center', marginBottom: 20 }}>
-            <Button title="Récupérer les participants" onPress={recuperer} />
             <TextInput
               style={{
                 height: 40,
@@ -202,15 +197,17 @@ export default function Shotgun (){
                 borderWidth: 1,
                 marginTop: 10,
                 marginBottom: 10,
-                width: '100%',
-                paddingLeft: 8,
+                width: 300,
+                paddingLeft: 20,
+                paddingRight: 20,
                 color: 'white',
                 backgroundColor: '#3E5C9A',
+                borderRadius: 20,
               }}
-              placeholder="Numéro de l'event"
+              placeholder="Nom de l'event"
               placeholderTextColor="lightgray"
-              onChangeText={setInputShotgun}
-              value={inputShotgun}
+              onChangeText={setInputName}
+              value={inputName}
             />
             <TextInput
               style={{
@@ -218,10 +215,12 @@ export default function Shotgun (){
                 borderColor: 'gray',
                 borderWidth: 1,
                 marginBottom: 20,
-                width: '100%',
-                paddingLeft: 8,
+                width: 300,
+                paddingLeft: 20,
+                paddingRight: 20,
                 color: 'white',
                 backgroundColor: '#3E5C9A',
+                borderRadius: 20,
               }}
               placeholder="Nombre de places"
               placeholderTextColor="lightgray"
