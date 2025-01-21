@@ -2,7 +2,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header';
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput } from 'react-native';
+import { View, Text, Button, TextInput, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 export default function Shotgun (){
@@ -187,6 +187,10 @@ export default function Shotgun (){
     }
 
     if (role === 'admin') {
+      const shotgunsIOS: Record<string, string> = shotguns.reduce((acc, shotgun) => {
+        acc[shotgun._id] = shotgun.nom;
+        return acc;
+      }, {} as Record<string, string>);
       return (
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#2E4A8E', padding: 20 }}>
           <View style={{ width: '100%', alignItems: 'center', marginBottom: 20 }}>
@@ -229,8 +233,6 @@ export default function Shotgun (){
             />
             <Button title="Créer l'event" onPress={creer} />
           </View>
-      
-          {/* Section des shotguns */}
           <View style={{ width: '100%', alignItems: 'center', marginTop: 20 }}>
             <Text style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
               Sélectionnez un shotgun :
