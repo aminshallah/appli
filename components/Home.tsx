@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { UserContext } from '@/contexts/UserContext';
 import { useContext } from 'react';
+import Visionneuse from '@/components/Visionneuse'
 
 const adr = {
   id : '1',
@@ -118,6 +119,14 @@ export default function Home(){
   const [showFilterOptions,setShowFilterOptions] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
   const [fetchedAnnonce, setFetchedAnnonce] = useState([])
+  const [aujourdhui, setAujourdui] = useState('') ;
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Mois commence à 0
+    const day = String(today.getDate()).padStart(2, '0'); // Jour du mois
+    return `${year}-${month}-${day}`;
+  };
 
 
   const changeFilterOptions = () => {
@@ -193,6 +202,24 @@ useEffect(() => {
     }
   , []);
 
+const [eventsFetched, setEventsFetched] = useState([]); 
+
+  useEffect(() => {
+
+  axios
+    .get(`http://192.168.0.101:3000/api/event/by-date?date=${getTodayDate()}`) // URL du backend
+    .then((response) => {
+      console.log('Événements récupérés :', response.data.events);
+      setEventsFetched(response.data.events)
+      console.log('ajourdhui', response.data.events)
+      // Stocke les événements dans un state
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la récupération des événements :', error.message);
+    });
+
+}, []);
+
  {/*}   const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -247,27 +274,14 @@ useEffect(() => {
     <Button title='droite' onPress={()=> setHour((hour +1)%24)}/>
   </ThemedView> */}
 
-  <ThemedView style={styles.optionContainer}>
-    <ThemedText style = {styles.option} onPress={changeFilterOptions()}>Filtrer par {filterOptions}</ThemedText>
-    <ThemedText style = {styles.option} onPress={changeSortOptions()}>Trier par {sortOption}</ThemedText>
- 
-  </ThemedView>
-  {showFilterOptions&&(<Filters filterOptions ={filterOptions} onFilterChange={(option) => setFilterOptions((prev) => {
-          // Ajout ou retrait de l'option
-          if (prev.includes(option)) {
-            return prev.filter((item) => item !== option);
-          } else {
-            return [...prev, option];
-          }
-        })} />)}
-  {showSortOptions&&(<Sorts sortOption ={sortOption} onSortChange ={(option =>setSortOption(option))} />)}
-  <ScrollView>
-  <ThemedView>
-    {sortedElements.map(element => <Element key={element.id} element={element} onPress={() => navigation.navigate('eventDetail', { element })}/>)}
-  </ThemedView>
-  </ScrollView>
+  {eventsFetched.length != 0 &&
+  <Visionneuse elements={eventsFetched}/>
+}
+{eventsFetched.length == 0 &&
+  <ThemedText style = {styles.rien}>Il n'y a pas d'évenements prévus aujourd'hui</ThemedText>
+}
 
-  </ThemedView>);
+  </ThemedView> );
 
 }
 
@@ -338,5 +352,10 @@ const styles = StyleSheet.create({
   option : {
     color : 'orange',
     fontSize : 18
+  },
+  rien :{
+    fontSize : 20,
+    textAlign : 'center',
+    color : 'white'
   }
 });

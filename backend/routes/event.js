@@ -56,7 +56,7 @@ router.get('/all' + '', async (req, res) => {
 });
   
 router.post('/', async (req, res) => {
-    const { genre, name, date, location, startTime, endTime, duration, description } = req.body;
+    const { genre, name, date, location, startTime, endTime, duration, description, asso } = req.body;
   
     console.log('Données reçues:', req.body);
   
@@ -75,6 +75,7 @@ router.post('/', async (req, res) => {
             endTime,
             duration,
             description,
+            asso
         });
   
         const savedEvent = await newEvent.save();
