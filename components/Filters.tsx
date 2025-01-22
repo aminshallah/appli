@@ -7,10 +7,10 @@ export default function Filters({ onFilterChange, filterOptions }) {
   return (
     <ThemedView style={styles.filtersContainer}>
       <ThemedText
-        onPress={() => onFilterChange('acti')}
-        style={filterOptions.includes('acti') ? styles.activeFilter : styles.inactiveFilter}
+        onPress={() => onFilterChange('activite')}
+        style={filterOptions.includes('activite') ? styles.activeFilter : styles.inactiveFilter}
       >
-        Actis
+        Activité
       </ThemedText>
       <ThemedText
         onPress={() => onFilterChange('barspe')}

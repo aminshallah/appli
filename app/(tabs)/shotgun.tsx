@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import {useRouter} from 'expo-router'
 
 export default function Shotgun (){
   const [message, setMessage] = useState('');

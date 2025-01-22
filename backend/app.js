@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const shotgunRoutes = require('./routes/shotgun');
 const eventRoutes = require('./routes/event');
 const userRoutes = require('./routes/user');
+const annonceRoutes = require('./routes/annonce')
 
 const app = express();
 mongoose.connect('mongodb+srv://noe:6bm9blTtQCAdS6YI@wei-cs.lzblm.mongodb.net/?retryWrites=true&w=majority&appName=WEI-CS')
@@ -23,6 +24,8 @@ app.use((req, res, next) => {
 app.use('/api/shotgun', shotgunRoutes);
 app.use('/api/event', eventRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/annonce', annonceRoutes);
+
 
 app.get('/', (req, res) => {
   res.json({ message: 'caca'});

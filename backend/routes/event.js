@@ -2,7 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/event');
 
-router.get('/' + '', async (req, res) => {
+// Middleware d'authentification (exemple simplifié)
+const authenticate = (req, res, next) => {
+    // Simule une vérification du token ou de l'utilisateur connecté
+    // Ajoutez votre logique d'authentification ici
+    next();
+  };
+
+router.get('/all' + '', async (req, res) => {
     try {
         const events = await Event.find();
         res.json({ events });
@@ -11,6 +18,18 @@ router.get('/' + '', async (req, res) => {
     }
   });
 
+
+  router.get('/byId/:id', async (req, res) => {
+    try {
+      const event = await Event.findById(req.params.id);
+      if (!event) {
+        return res.status(404).json({ message: 'Événement introuvable' });
+      }
+      res.status(200).json(event);
+    } catch (err) {
+      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+  });
 
   router.get('/by-date', async (req, res) => {
     const { date } = req.query; // La date est envoyée comme paramètre de requête
@@ -64,5 +83,6 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 module.exports = router;

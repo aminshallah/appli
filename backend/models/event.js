@@ -9,6 +9,7 @@ const eventSchema = new mongoose.Schema({
     endTime: { type: String, required: true },
     duration: { type: Number, required: true },
     description: { type: String, required: false },
+    assos : {type : String, required: false}
 });
 
 module.exports = mongoose.model('Event', eventSchema);

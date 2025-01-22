@@ -1,39 +1,34 @@
-import { Image, StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 
 export default function Header() {
   return (
     <SafeAreaView style={styles.safeContainer}>
-    <ThemedView style={styles.titleContainer}>
-      <Image
-        source={require('@/assets/images/logo.png')}
-        style={styles.reactLogo}
-      />
-      <ThemedText style={styles.title}>WEI CENTRALESUPELEC </ThemedText>
-    </ThemedView>
+      <View style={styles.textContainer}>
+        <ThemedText style={styles.title}>WeildWeeks 2025</ThemedText>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',        // Aligne le texte et l'image en ligne
-    alignItems: 'center',         // Centre le contenu verticalement
-    backgroundColor: '#244B93',
-    paddingTop: 25,
-  },
   safeContainer: {
-    backgroundColor: '#244B93',     // Assure que la couleur de fond couvre tout
+    backgroundColor: '#244B93',
+    width: '100%', // Prend toute la hauteur de l'écran
+    justifyContent: 'flex-start', // Place le contenu en haut
+    alignItems: 'center',
+    paddingTop : 25,
+    paddingBottom : 10 // Centre le texte horizontalement
   },
-  reactLogo: {
-    height: 60,                   // Réduit la taille du logo
-    width: 60,                    // Assure que le logo reste proportionnel
-    marginRight: 10,              // Espace entre le logo et le texte
+  textContainer: {
+    width: '100%', // Prend toute la largeur
+    justifyContent: 'center', // Centre verticalement si nécessaire
+    alignItems: 'center', // Centre horizontalement
   },
-  title : {
-    color : '#E79140',
-    fontWeight : 'bold',
-    fontSize: 25,
-  }
+  title: {
+    color: '#E79140',
+    fontWeight: 'bold',
+    fontSize: 23,
+    textAlign: 'center', // Centrer le texte
+  },
 });

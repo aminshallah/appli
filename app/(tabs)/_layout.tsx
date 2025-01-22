@@ -7,9 +7,14 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import {Ionicons} from "@expo/vector-icons";
+import UserProvider, { UserContext } from '@/contexts/UserContext';
+import { useEffect, useState, useContext } from "react";
+
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { user } = useContext(UserContext);
 
   return (
     <Tabs
@@ -24,7 +29,8 @@ export default function TabLayout() {
             position: 'absolute',
           },
           default: {
-            backgroundColor: '#244B93', // Change la couleur de fond sur Android aussi
+            backgroundColor: '#244B93',
+           // Change la couleur de fond sur Android aussi
           },
         }),
       }}>
@@ -36,10 +42,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="favoris"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Favoris',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="star" size={28} color={color} />
+          ),
         }}
       />
       <Tabs.Screen

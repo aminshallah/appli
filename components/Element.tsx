@@ -3,7 +3,8 @@ import {useState, useEffect} from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+import { UserContext } from '@/contexts/UserContext';
+import { useContext } from 'react';
 
 const DEFAULT_ELEMENT_VALUES = {
   id : '',
@@ -28,79 +29,95 @@ const images = {
 }
 
 export default function Element({element, onPress}) {
+  const {user} = useContext(UserContext)
   
   const [elementValue, setElementValue] = useState(DEFAULT_ELEMENT_VALUES);
+  const [fetched, setFetched] = useState(false)
 
   useEffect( () => {
     setElementValue({
-      id : '',
-      genre : element.genre,
-      name : element.name,
-      date : element.date,
-      location : element.location,
-      startTime : element.startTime,
-      endTime : element.endTime,
-      duration : element.duration,
-      assos : element.assos,
-      logo : element.logo,
-      description : element.description
-    })
+      id : element._id||'',
+      genre : element.genre|| '',
+      name : element.name|| '',
+      date : element.date|| '',
+      location : element.location|| '',
+      startTime : element.startTime|| '',
+      endTime : element.endTime|| '',
+      duration : element.duration|| '',
+      assos : element.assos || '',
+      logo : element.logo|| '',
+      description : element.description|| ''
+    });
+    setFetched(true)
   },[element]);
 
-
-
-
   return (
-    
     <TouchableOpacity style={styles.container} onPress={onPress}>
-
-
-      {(element.assos).map((assos =>(
-        <Image source={images[assos]}
-        style={styles.reactLogo}
-      />
-      )))}
-      <ThemedView style={styles.textContainer}>
-        <ThemedText type='title' style={styles.titleText}>{element.name}</ThemedText>
-        
-        <ThemedText> <Ionicons name="time-outline" size={22} color="orange" />{element.startTime}h-{element.endTime}h</ThemedText>
-        <ThemedText><Ionicons name="navigate-outline" size={22} color="orange" />{element.location}</ThemedText>
+      {/* Image */}
+      <ThemedView style={styles.imageContainer}>
+        <Image
+          source={images[element.assos]}
+          style={styles.logo}
+        />
       </ThemedView>
-      <ThemedView style={styles.iconContainer}>
-      <Ionicons name="star" size={32} color="orange" />
+
+      {/* Text and Details */}
+      <ThemedView style={styles.detailsContainer}>
+        <ThemedText style={styles.title}>{element.name}</ThemedText>
+        <ThemedText style={styles.detail}>
+          <Ionicons name="time-outline" size={18} color="orange" /> {element.startTime}h - {element.endTime}h
+        </ThemedText>
+        <ThemedText style={styles.detail}>
+          <Ionicons name="location-outline" size={18} color="orange" /> {element.location}
+        </ThemedText>
       </ThemedView>
+
+      {/* Notification Icon */}
+      {user.favoris.includes(elementValue.id)&&<Ionicons name="star" size={32} color="orange" style={styles.icon} /> }
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',       // Arrange l'image et le texte en ligne
-    alignItems: 'center',        // Centre verticalement
-    padding: 10,
-    margin: 10,
-    backgroundColor: 'lightgrey',
-    borderRadius :20,
-    overflow : 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor : '#4867A1', // Bleu similaire à l'image
+    borderRadius: 20,
+    padding: 15,
+    marginVertical: 10,
+    marginHorizontal: 20,
   },
-  reactLogo: {
-    height: 80,                  // Hauteur augmentée pour remplir presque tout le container
-    width: 80,                   // Largeur proportionnelle pour que l'image garde ses dimensions
-    marginRight: 20,             // Augmente l'espace entre l'image et le texte
+  imageContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor : '#4867A1'
   },
-  textContainer: {
-    flexDirection: 'column',     // Arrange les textes en colonne à droite de l'image
-    justifyContent: 'center',    // Centre les textes verticalement
-    backgroundColor : 'transparent'
+  logo: {
+    width: 70,
+    height: 70,
+    resizeMode: 'contain',
   },
-  titleText: {
-    color: '#E79140',
+  detailsContainer: {
+    flex: 3,
+    justifyContent: 'space-evenly',
+    paddingLeft: 10,
+    backgroundColor : '#4867A1'
+  },
+  title: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 4,             // Espace entre le titre et les détails
+    color: '#F4A622', // Orange
   },
-  iconContainer :{
-    flex : 1,
-    alignItems : 'center',
-    backgroundColor : 'transparent'
-  }
+  detail: {
+    fontSize: 16,
+    color: 'white',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  icon: {
+    flex: 0.5,
+    textAlign: 'right',
+  },
 });

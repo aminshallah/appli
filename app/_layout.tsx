@@ -33,6 +33,9 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="eventDetail" options={{title : "Détails", headerShown : true, headerBackTitle: 'Retour'}} />
+        <Stack.Screen name="annonceDetail" options={{title : "Détails", headerShown : true, headerBackTitle: 'Retour'}} />
+        <Stack.Screen name="admin"  />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

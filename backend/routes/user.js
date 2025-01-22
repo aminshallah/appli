@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { User, Family } = require('../models/user');
+const Event = require('../models/event');
 
 // Middleware d'authentification (exemple simplifié)
 const authenticate = (req, res, next) => {
@@ -30,9 +31,9 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
-router.get('/:id', authenticate, async (req, res) => {
+router.get('/name/:id', authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate('family');
+    const user = await User.findById(req.params.id).select('name');;
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable' });
     }
@@ -125,5 +126,105 @@ router.get('/user/me', authenticate, async (req, res) => {
 	  res.status(500).json({ message: 'Erreur serveur' });
 	}
   });
+
+
+  router.post('/findByUserName', authenticate, async (req, res) => {
+    const { userName } = req.body; // Récupérer le nom d'utilisateur du corps de la requête
+  
+    if (!userName) {
+      return res.status(400).json({ message: 'Nom d\'utilisateur manquant' });
+    }
+  
+    try {
+      // Recherche de l'utilisateur par son nom, vous pouvez ajuster la recherche avec une regex si nécessaire
+      const user = await User.findOne({ name: { $regex: new RegExp('^' + userName + '$', 'i') } }).populate('family');
+  
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur introuvable' });
+      }
+  
+      // Renvoie toutes les informations de l'utilisateur
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+  });
+  
+  
+
+  router.post('/favoris', authenticate, async (req, res) => {
+    const { userId, eventId } = req.body; // ID de l'élément à ajouter
+  
+    try {
+      // Vérifie si l'utilisateur existe
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur introuvable' });
+      }
+  
+      // Vérifie si l'élément existe
+      const event = await Event.findById(eventId); // Modèle Item pour les éléments
+      if (!event) {
+        return res.status(404).json({ message: 'Élément introuvable' });
+      }
+      if (!user.favoris) {
+        user.favoris = [];  // Initialisation si non défini
+      }
+  
+      // Vérifie si l'élément est déjà dans les favoris
+      if (user.favoris.includes(eventId)) {
+        return res.status(400).json({ message: 'Élément déjà dans les favoris' });
+      }
+  
+      // Ajoute l'élément aux favoris de l'utilisateur
+      user.favoris.push(eventId);
+      await user.save();
+  
+      res.status(200).json({ message: 'Élément ajouté aux favoris avec succès', favoris: user.favoris });
+    } catch (err) {
+      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+  });
+
+
+
+  router.get('/favoris/:id', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id).select('favoris');
+      if (!user) {
+        return res.status(404).json({ message: 'Événement introuvable' });
+      }
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+  });
+
+  router.delete('/delete/favoris', authenticate, async (req, res) => {
+    const { userId, eventId } = req.body; // ID de l'utilisateur et de l'élément à retirer des favoris
+    
+    try {
+      // Vérifie si l'utilisateur existe
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'Utilisateur introuvable' });
+      }
+  
+      // Vérifie si l'élément existe dans les favoris
+      if (!user.favoris.includes(eventId)) {
+        return res.status(400).json({ message: 'L\'élément n\'est pas dans les favoris' });
+      }
+  
+      // Retire l'élément des favoris de l'utilisateur
+      user.favoris = user.favoris.filter(favori => favori.toString() !== eventId.toString());
+      await user.save();
+  
+      res.status(200).json({ message: 'Élément retiré des favoris avec succès', favoris: user.favoris });
+    } catch (err) {
+      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+    }
+  });
+
+
 
 module.exports = router;
