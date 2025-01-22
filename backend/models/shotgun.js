@@ -6,6 +6,7 @@ const shotgunSchema = mongoose.Schema({
     places: {type: Number, required: true},
     participants: {type: Array, required: false},
     currentShotgun: {type: Boolean, default: false},
+    date: {type: Date, required: true},
 });
 
 module.exports = mongoose.model('Shotgun', shotgunSchema);
