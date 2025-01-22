@@ -30,7 +30,7 @@ export default function TabLayout() {
           },
           default: {
             backgroundColor: '#244B93',
-           // Change la couleur de fond sur Android aussi
+            display :user.accessToken ? 'flex' : 'none' // Change la couleur de fond sur Android aussi
           },
         }),
       }}>
