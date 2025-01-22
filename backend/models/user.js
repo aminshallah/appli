@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
   family: { type: mongoose.Schema.Types.ObjectId, ref: 'Family' },
   role: { type: String, enum: ['user', 'admin', 'pcs' ], default: 'user' }, //pcs peut changer les gens de famille et le chef d'une famille
   chef: { type: Boolean, default: false }, //peut shotgun ou pas
+  favoris: [{
+    type: mongoose.Schema.Types.ObjectId,  // Type d'ObjectId de MongoDB
+    ref: 'Event'  // Référence au modèle 'Event'
+  }],
 });
 
 const Family = mongoose.model('Family', familySchema);

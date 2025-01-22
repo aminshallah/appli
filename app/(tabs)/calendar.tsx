@@ -5,11 +5,15 @@ import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header' ;
 import Visionneuse from '@/components/Visionneuse';
 import axios from 'axios';
+import {useRouter} from 'expo-router'
+import { UserContext } from '@/contexts/UserContext';
+import { useContext } from 'react'
 
 const getSelectedDate = (selectedDay) => {
   const date = new Date(2025, 8, selectedDay); // Crée une date avec le mois (0-indexed) et le jour
   return date.toISOString().split('T')[0]; // Format ISO 8601 : YYYY-MM-DD
 };
+
 
 const adr = {
   id : '1',
@@ -86,12 +90,22 @@ export const elements = [adr,wei,ce,voirie,vr]
 export default function Calendrier() {
   const weeks = [
     ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-    ['28', '29', '30', '31', '1', '2', '3'],
-    ['4', '5', '6', '7', '8', '9', '10'],
-    ['11', '12', '13', '14', '15', '16', '17'],
+    ['27','28', '29', '30', '31', '1', '2'],
+    ['3', '4', '5', '6', '7', '8', '9'],
+    ['10', '11', '12', '13', '14', '15', '16'],
   ];
 
-  const outOfMonthDays = ['28', '29', '30', '31'];
+        const {user} = useContext(UserContext)
+    const router = useRouter()
+      const [memberNames, setMemberNames] = useState([]);
+      const [isMounted, setIsMounted] = useState(false);
+      useEffect(() => {
+        setIsMounted(true);  // Marquer le composant comme monté après le premier rendu
+      }, []);
+    
+
+
+  const outOfMonthDays = ['28', '29', '30', '27', '31'];
   const [selectedDay, setSelectedDay] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date())
   const [month, setMonth] = useState(new Date().getMonth());
@@ -123,7 +137,7 @@ export default function Calendrier() {
 
     console.log(selectedDay, date)
     axios
-      .get(`http://localhost:3000/api/event/by-date?date=${selectedDate}`) // URL du backend
+      .get(`http://192.168.0.101:3000/api/event/by-date?date=${selectedDate}`) // URL du backend
       .then((response) => {
         console.log('Événements récupérés :', response.data.events);
         setEventsFetched(response.data.events)
@@ -142,13 +156,27 @@ export default function Calendrier() {
         setSelectedDay(parseInt(day));  // Assure-toi de convertir en entier
       }
     };
+    const testEvents = [
+      {
+        date: "2025-08-31T00:00:00.000Z",
+        description: "",
+        duration: 8,
+        endTime: "18",
+        genre: "obligatoire",
+        location: "Bâtiment Eiffel",
+        name: "Tour des cotizs",
+        startTime: "10",
+        __v: 0,
+        _id: "678cdd9976cd4c24816d5c9d"
+      }
+    ];
 
     
     return (
       <SafeAreaView style={styles.container}>
         <Header />
         <ThemedView style={styles.container}>
-          <ThemedText style={styles.title}>Weild Weeks 2025</ThemedText>
+
           <View style={styles.calendar}>
             <View style={styles.weekRow}>
               {weeks[0].map((day, index) => (
@@ -184,7 +212,7 @@ export default function Calendrier() {
               </View>
             ))}
           </View>
-          <Text>{eventsFetched.length} évenements ce jour ci </Text>
+          <Text style={styles.fetched}>{eventsFetched.length} évenements ce jour ci </Text>
           <Visionneuse elements={eventsFetched} />
         </ThemedView>
       </SafeAreaView>
@@ -198,7 +226,7 @@ const styles = StyleSheet.create({
   title: {
     color: 'orange',
     alignSelf: 'center',
-    fontSize: 14,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8, // Réduction de l'écart sous le titre
   },
@@ -239,4 +267,11 @@ const styles = StyleSheet.create({
   outOfMonthDay: {
     color: 'grey',
   },
+  fetched : {
+    color : 'orange',
+    fontSize : 19,
+    fontWeight : 'bold',
+    textAlign : 'center',
+    paddingTop :10
+  }
 });

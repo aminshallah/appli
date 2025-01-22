@@ -4,6 +4,15 @@ export type User = {
   firstName: string;
   lastName: string;
   avatar: string;
+  idVR : string;
+  id : string;
+  familyId : string;
+  familyMembers : [string] ;
+  familyName : string ; 
+  shotgun : string;
+  role : string;
+  favoris : [string],
+  accessToken : string
 }
 
 export interface UserContextInterface {
@@ -14,7 +23,16 @@ export interface UserContextInterface {
 const defaultUser: User = {
   firstName: '',
   lastName: '',
-  avatar: ''
+  avatar: '',
+  idVR : '',
+  id : '',
+  familyId: '',
+  familyMembers : [''],
+  familyName : '',
+  shotgun : '',
+  role : '',
+  favoris : [''],
+  accessToken : ''
   
 };
 

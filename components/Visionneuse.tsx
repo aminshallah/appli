@@ -82,9 +82,9 @@ const vr = {
 
 export const elements = [adr,wei,ce,voirie,vr]
 
-export default function Visionneuse({elements}){
-  const navigation = useNavigation() ; 
-  const [showFilterOptions,setShowFilterOptions] = useState(false);
+export default function Visionneuse({elements}) {
+  const navigation = useNavigation();
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
 
   const changeFilterOptions = () => {
@@ -93,77 +93,100 @@ export default function Visionneuse({elements}){
       setShowSortOptions(false);
     }
   }
+
   const changeSortOptions = () => {
     return () => {
       setShowSortOptions(!showSortOptions);
       setShowFilterOptions(false);
     }
-  }  
+  }
 
   const [filteredElements, setFilteredElements] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
 
   useEffect(() => {
-    const filtered = elements.filter((event) =>
-      filterOptions.length === 0 || filterOptions.includes(event.genre)
-    );
+    const filtered = elements ? elements.filter((event) =>
+      filterOptions.length === 0 || filterOptions.includes(event?.genre)
+    ) : [];
     setFilteredElements(filtered);
-  }, [filterOptions]);
+  }, [elements, filterOptions]);
 
   const [sortedElements, setSortedElements] = useState([]);
   const [sortOption, setSortOption] = useState('heure');
 
   useEffect(() => {
-    let sorted = filteredElements ; 
-    if (sortOption === 'A-Z'){
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
+    if (!filteredElements) return;
+    
+    let sorted = [...filteredElements];
+    
+    if (sortOption === 'A-Z') {
+      sorted.sort((a, b) => (b?.name || '').localeCompare(a?.name || ''));
     }
-    if (sortOption === 'Z-A'){
-      sorted.sort((a, b) => b.name.localeCompare(a.name));
+    else if (sortOption === 'Z-A') {
+      sorted.sort((a, b) => (a?.name || '').localeCompare(b?.name || ''));
     }
-    if (sortOption ===  'genre'){
-      sorted.sort((a, b) => a.genre.localeCompare(b.genre));
+    else if (sortOption === 'genre') {
+      sorted.sort((a, b) => (a?.genre || '').localeCompare(b?.genre || ''));
     }
-    if (sortOption ===  'heure'){
-      sorted.sort((a, b) => (a.startTime-b.startTime));
+    else if (sortOption === 'heure') {
+      sorted.sort((a, b) => {
+        const timeA = a?.startTime ? parseInt(a.startTime, 10) : -1;
+        const timeB = b?.startTime ? parseInt(b.startTime, 10) : -1;
+        return timeA - timeB;
+      });
     }
+    
     setSortedElements(sorted);
-
-  })
-
-
-
-
-
-  
-
+  }, [filteredElements, sortOption]);
 
   return (
     <ThemedView style={styles.pageContainer}>
-    <StatusBar style="light"/>
+      <StatusBar style="light"/>
+      
+      <ThemedView style={styles.optionContainer}>
+        <ThemedText style={styles.options} onPress={changeFilterOptions()}>
+          Filtrer par {filterOptions.join(', ')}
+        </ThemedText>
+        <ThemedText style={styles.options} onPress={changeSortOptions()}>
+          Trier par {sortOption}
+        </ThemedText>
+      </ThemedView>
 
-  <ThemedView style={styles.optionContainer}>
-    <ThemedText onPress={changeFilterOptions()}>Filtrer par {filterOptions}</ThemedText>
-    <ThemedText onPress={changeSortOptions()}>Trier par {sortOption}</ThemedText>
- 
-  </ThemedView>
-  {showFilterOptions&&(<Filters filterOptions ={filterOptions} onFilterChange={(option) => setFilterOptions((prev) => {
-          // Ajout ou retrait de l'option
-          if (prev.includes(option)) {
-            return prev.filter((item) => item !== option);
-          } else {
-            return [...prev, option];
-          }
-        })} />)}
-  {showSortOptions&&(<Sorts sortOption ={sortOption} onSortChange ={(option =>setSortOption(option))} />)}
-  <ScrollView>
-  <ThemedView>
-    {sortedElements.map(element => <Element key={element.id} element={element} onPress={() => navigation.navigate('eventDetail', { element })}/>)}
-  </ThemedView>
-  </ScrollView>
+      {showFilterOptions && (
+        <Filters 
+          filterOptions={filterOptions} 
+          onFilterChange={(option) => setFilterOptions((prev) => {
+            if (prev.includes(option)) {
+              return prev.filter((item) => item !== option);
+            } else {
+              return [...prev, option];
+            }
+          })} 
+        />
+      )}
 
-  </ThemedView>);
+      {showSortOptions && (
+        <Sorts 
+          sortOption={sortOption} 
+          onSortChange={(option) => setSortOption(option)} 
+        />
+      )}
 
+      <ScrollView>
+        <ThemedView>
+          {sortedElements.map(element => 
+            element ? (
+              <Element 
+                key={element.id} 
+                element={element} 
+                onPress={() => navigation.navigate('eventDetail', { element })}
+              />
+            ) : null
+          )}
+        </ThemedView>
+      </ScrollView>
+    </ThemedView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -196,5 +219,8 @@ const styles = StyleSheet.create({
     backgroundColor : 'transparent',
     margin: 15,
     color : 'orange'
+  },
+  options : {
+    color : 'white'
   }
 });

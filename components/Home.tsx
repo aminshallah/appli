@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Button, ScrollView,  } from 'react-native';
+import { Image, StyleSheet, Platform, Button, ScrollView, Text  } from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { HelloWave } from '@/components/HelloWave';
@@ -9,7 +9,13 @@ import Header from '@/components/Header' ;
 import Filters from '@/components/Filters'; 
 import Sorts from '@/components/Sorts'; 
 import Element from '@/components/Element';
+import AnnonceView from '@/components/AnnonceView'
+import Annonce from '@/components/Annonce'
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { UserContext } from '@/contexts/UserContext';
+import { useContext } from 'react';
+
 const adr = {
   id : '1',
   genre: 'barspe',
@@ -82,11 +88,21 @@ const vr = {
 
 export const elements = [adr,wei,ce,voirie,vr]
 
+const annonceTest = {
+  title : "Bienvenue à CentraleSupélec !",
+  genre :"bienvenue",
+  from : "La team WW",
+  date : "2025-09-01",
+  description : "Meilleure ecole du monde oouuuu"
+}
+
+
 export default function Home(){
   const navigation = useNavigation() ; 
   
 
  
+  const { user } = useContext(UserContext);
 
   const [currentTime, setCurrentTime] = useState(new Date())
   
@@ -101,6 +117,7 @@ export default function Home(){
   const [hour, setHour] = useState(new Date().getHours());
   const [showFilterOptions,setShowFilterOptions] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const [fetchedAnnonce, setFetchedAnnonce] = useState([])
 
 
   const changeFilterOptions = () => {
@@ -118,6 +135,7 @@ export default function Home(){
 
   const [filteredElements, setFilteredElements] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
+  
 
   useEffect(() => {
     const filtered = elements.filter((event) =>
@@ -148,44 +166,6 @@ export default function Home(){
   })
 
 
-  const postEvent = async () => {
-    const eventData = {
-      genre: 'acti',
-    name : 'ACTI WEI',
-    date: '03/04/2004',
-    location : 'Musée',
-    startTime : '12',
-    endTime : '13',
-    duration : '1',
-    description : ''
-    };
-
-    try {
-        const response = await fetch('http://10.0.2.2:5000/api/events', {
-            method: 'POST', // Méthode de la requête
-            headers: {
-                'Content-Type': 'application/json' // Indique que les données sont au format JSON
-            },
-            body: JSON.stringify(eventData) // Convertit l'objet JavaScript en JSON
-        });
-
-        // Vérifie si la requête a réussi
-        if (!response.ok) {
-            throw new Error('Erreur lors de la création de l\'événement');
-        }
-
-        const data = await response.json(); // Parse la réponse JSON
-        console.log('Événement créé avec succès:', data);
-    } catch (error) {
-        console.error('Erreur:', error);
-    }
-};
-
-
-
-
-
-
 
   let fullDate = currentTime.toLocaleString('fr-FR',{
     weekday: 'long',
@@ -199,26 +179,77 @@ export default function Home(){
     second: 'numeric'
   })
 
-  
+useEffect(() => {
+  axios
+      .get(`http://192.168.0.101:3000/api/annonce`) // URL du backend
+      .then((response) => {
+        console.log('Annonces récupérés :', response.data.annonces);
+        setFetchedAnnonce(response.data.annonces)
+        // Stocke les événements dans un state
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la récupération des événements :', error.message);
+      });
+    }
+  , []);
 
+ {/*}   const [favorites, setFavorites] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
+    useEffect(() => {
+      const fetchFavorites = async () => {
+        try {
+          setLoading(true);
+          const response = await axios.get(`http://localhost:3000/api/user/favoris/${user.id}`);
+          setFavorites(response.data.favoris); // Assurez-vous que la réponse contient un tableau "favoris"
+          setLoading(false);
+        } catch (err) {
+          setError(err.response?.data || 'Erreur lors de la récupération des favoris');
+          setLoading(false);
+        }
+      };
+  
+      if (user.id) {
+        fetchFavorites();
+      }
+    }, [user.id]); // Dépendance sur userId
+
+
+    const [favoritesDisplayed, setFavoritesDisplayed] = useState([]) */}
 
   return (
     <ThemedView style={styles.pageContainer}>
     <StatusBar style="light"/>
-  <Header />
+  <Header nom ={"WeildWeeks 2025"} />
   <ThemedView style ={styles.titleContainer}>
-  <ThemedText type = 'title' >WeildWeeks 2025 </ThemedText>
-  <ThemedText type = "subtitle">{fullDate}</ThemedText>
+  <ThemedText style = {styles.title} > </ThemedText>
+
   </ThemedView>
-  <ThemedView style={styles.buttonContainer}>
+
+  <ThemedView style ={styles.annonceView}>
+
+    <Text style = {styles.annonceTitle}>Annonces</Text>
+    <ScrollView horizontal ={true}>
+
+    {fetchedAnnonce.map(annonce => <Annonce annonce={annonce} onPress={() => navigation.navigate('annonceDetail', { annonce: annonce })}/>)}
+    </ScrollView>
+
+
+  </ThemedView>
+
+
+  <ThemedText style = {styles.subtitle}>{fullDate}</ThemedText>
+  {/*<ThemedView style={styles.buttonContainer}>
+
     <Button title='gauche' onPress={()=> setHour((hour -1+24)%24)}/>
     <ThemedText style={styles.centeredText}>{hour}h - {hour +1}h </ThemedText>
     <Button title='droite' onPress={()=> setHour((hour +1)%24)}/>
-  </ThemedView>
+  </ThemedView> */}
 
   <ThemedView style={styles.optionContainer}>
-    <ThemedText onPress={changeFilterOptions()}>Filtrer par {filterOptions}</ThemedText>
-    <ThemedText onPress={changeSortOptions()}>Trier par {sortOption}</ThemedText>
+    <ThemedText style = {styles.option} onPress={changeFilterOptions()}>Filtrer par {filterOptions}</ThemedText>
+    <ThemedText style = {styles.option} onPress={changeSortOptions()}>Trier par {sortOption}</ThemedText>
  
   </ThemedView>
   {showFilterOptions&&(<Filters filterOptions ={filterOptions} onFilterChange={(option) => setFilterOptions((prev) => {
@@ -241,9 +272,18 @@ export default function Home(){
 }
 
 const styles = StyleSheet.create({
+  title : {
+    color : 'orange',
+    fontSize : 30,
+    fontWeight : 'bold'
+    
+  },
   pageContainer : {
     backgroundColor: '#244B93',
     flex: 1,
+    width: '100%',
+    paddingLeft : 10,
+    paddingRight : 10
     //alignItems: 'flex-start'     // Couleur de fond de la page
   },
   titleContainer: {
@@ -258,7 +298,9 @@ const styles = StyleSheet.create({
     backgroundColor : 'transparent',
     alignItems : 'center',
     gap: 15,
-  paddingHorizontal: 90
+  paddingHorizontal: 90, 
+  justifyContent : 'center',
+  marginRight : 0
   },
   centeredText: {
     textAlign: 'center',
@@ -268,7 +310,33 @@ const styles = StyleSheet.create({
     flexDirection : 'row',
     justifyContent : 'space-between',
     backgroundColor : 'transparent',
-    margin: 15,
+    marginLeft:15 ,
+    marginRight : 30,
+    paddingBottom : 10,
     color : 'orange'
+  },
+  annonceView : {
+    fontSize : 30,
+    color : 'orange',
+    padding : 15,
+    paddingBottom :0
+  },
+  annonceTitle :{
+    fontSize : 25,
+    color : 'orange',
+    fontWeight : 'bold',
+    marginBottom : 10
+  },
+  subtitle  :{
+    fontSize : 25,
+    color : 'orange',
+    fontWeight : 'bold',
+    marginBottom : 10, 
+    textAlign : 'center',
+    padding : 15
+  },
+  option : {
+    color : 'orange',
+    fontSize : 18
   }
 });

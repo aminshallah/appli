@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Button, ScrollView, View, Linking } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header';
-import { useContext, useEffect } from 'react';
-import UserProvider, { UserContext } from '@/contexts/UserContext'
-import Profil from '@/components/Profil'
+import { useContext } from 'react';
+import { UserContext } from '@/contexts/UserContext';
+import Profil from '@/components/Profil';
+import axios from 'axios';
+import {useRouter} from 'expo-router'
+import { Pressable, Text } from 'react-native';
+import { Link } from 'expo-router';
 
 export default function Profile() {
+  const router = useRouter()
   const familyName = "Famille des Dragons";
   const familyMembers = [
     { id: 1, name: "Alice Dupont" },
@@ -19,15 +24,46 @@ export default function Profile() {
     { id: 2, name: "Sortie Bowling", date: "22/12/2024" },
   ];
   const familyRanking = { position: 3, points: 120 };
-  const { user } = useContext(UserContext)
-  console.log(user)
+  const { user, setUser } = useContext(UserContext);
+  
+  const [memberNames, setMemberNames] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);  // Marquer le composant comme monté après le premier rendu
+  }, []);
 
   useEffect(() => {
+    if (!user.accessToken&&isMounted) {
+      router.push('/');  // Redirige vers la page Home dès que l'accessToken est défini
+    }
+  }, [user.accessToken]);
+
+  useEffect(() => {
+    const fetchNames = async () => {
+      const names = [];
+      for (const member of user.familyMembers) {
+        const name = await fetchUserName(member);
+        names.push(name);
+      }
+      setMemberNames(names);
+    };
+
     if (user) {
-      console.log("Données utilisateur mises à jour:", user);
-      // Tu peux ici effectuer des actions supplémentaires si nécessaire
+      fetchNames();
     }
   }, [user]);
+
+  const fetchUserName = async (userId) => {
+    try {
+      const response = await axios.get(`http://192.168.0.101:3000/api/user/name/${userId}`);
+      return response.data.name;
+    } catch (error) {
+      console.error('Erreur de récupération du nom:', error);
+      return 'Nom indisponible';
+    }
+  };
+
+  console.log(user.id)
 
   // Lien vers le groupe WhatsApp
   const whatsappGroupLink = "https://chat.whatsapp.com/your-group-id";
@@ -51,11 +87,11 @@ export default function Profile() {
 
         <ThemedView style={styles.card}>
           <ThemedText style={styles.cardTitle}>Ma famille de parrainage</ThemedText>
-          <ThemedText style={styles.familyName}>{familyName}</ThemedText>
+          <ThemedText style={styles.familyName}>{user.familyName}</ThemedText>
           <ThemedText>Membres :</ThemedText>
-          {familyMembers.map((member) => (
-            <ThemedText key={member.id} style={styles.memberText}>
-              • {member.name}
+          {memberNames.map((name, index) => (
+            <ThemedText key={index}>
+              • {name}
             </ThemedText>
           ))}
           <Button
@@ -83,10 +119,36 @@ export default function Profile() {
         </ThemedView>
 
         <Button
-          title="Changer de famille"
-          onPress={() => alert('Demande envoyée à l\'administrateur')}
+          title="Se déconnecter"
+          onPress={() => {
+            const newUser = {
+              firstName: user.firstName,
+              lastName: user.lastName,
+              avatar: user.avatar,
+              idVR: user.idVR,
+              id: user.id,
+              familyId: user.familyId,
+              familyMembers : user.familyMembers,
+              familyName : user.familyName,
+              shotgun: user.shotgun,
+              role: user.role,
+              favoris : user.favoris,
+              accessToken : ''
+            };
+            setUser(newUser)
+          }}
           color="#F44336"
         />
+{user.role =='admin' &&
+<Link href="/admin " asChild>
+<Button
+          title="Admin"
+          onPress={() => {
+            
+          }}
+          color="rose"
+        />
+    </Link>}
       </ScrollView>
     </ThemedView>
   );
@@ -101,10 +163,6 @@ const styles = StyleSheet.create({
   profileSection: {
     alignItems: 'center',
     marginBottom: 20,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -125,11 +183,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     color: '#333',
-  },
-  memberText: {
-    fontSize: 14,
-    marginLeft: 10,
-    color: '#555',
   },
   eventText: {
     fontSize: 14,

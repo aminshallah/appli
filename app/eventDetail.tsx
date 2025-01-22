@@ -1,14 +1,17 @@
 import { Image, StyleSheet } from 'react-native';
-import { useState, useEffect } from 'react';
-import { Link } from 'expo-router';
+import { useState, useEffect, useContext } from 'react';
+import { useRoute } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { UserContext } from '@/contexts/UserContext';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRoute } from '@react-navigation/native';
+import axios from 'axios';
 
-export default function eventDetail() {
+export default function EventDetail() {
   const route = useRoute();
   const { element } = route.params;
+
+  const { user, setUser  } = useContext(UserContext);
 
   const images = {
     adr: require('@/assets/images/adr.png'),
@@ -18,19 +21,113 @@ export default function eventDetail() {
     vr: require('@/assets/images/vr.png'),
   };
 
+  const [estFavoris, setEstFavori] = useState(false);
+
+  useEffect(() => {
+    const estDansFavoris = user.favoris.includes(element._id);
+    console.log("test d'user includes",user.favoris.includes(element._id))
+    console.log("elementid",element._id)
+    console.log(estDansFavoris)
+    setEstFavori(estDansFavoris);
+    const tmp = "caca"
+    console.log(tmp)
+    console.log(user.favoris)
+    console.log("Favoris:", estDansFavoris, "pour l'élément:", element._id); // Vérifie ici
+  }, [user, element._id]); // Ajoute les dépendances pour que l'effet se déclenche correctement
+
+
+  const addToFavorisContext = (eventId) => {
+    const updatedFavoris = [...user.favoris, eventId];
+    const newUser = {
+      ...user,  // Garde toutes les propriétés existantes
+      favoris: updatedFavoris
+    };
+    setUser(newUser);
+  };
+  
+  const removeFromFavorisContext = (eventId) => {
+    const updatedFavoris = user.favoris.filter((id) => id !== eventId);
+    const newUser = {
+      ...user,  // Garde toutes les propriétés existantes
+      favoris: updatedFavoris
+    };
+    setUser(newUser);
+  };
+
+
+
+  const addToFavorites = async (userId, eventId) => {
+    try {
+      const response = await axios.post(
+        'http://192.168.0.101:3000/api/user/favoris',  // Remplace par l'URL de ton serveur
+        {
+          userId: userId,
+          eventId: eventId
+        }
+      );
+  
+      console.log('Réponse du serveur:', response.data);
+      return response.data;
+  
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout aux favoris:', error.response ? error.response.data : error.message);
+      throw error;
+    }
+  };
+
+  const removeFromFavorites = async (userId, eventId) => {
+    try {
+      const response = await axios.delete('http://192.168.0.101:3000/api/user/delete/favoris', {
+        data: { userId, eventId }
+      });
+  
+      console.log('Réponse du serveur:', response.data);
+      return response.data;
+  
+    } catch (error) {
+      console.error('Erreur lors du retrait des favoris:', error.response ? error.response.data : error.message);
+      throw error;
+    }
+  };
+
+  const handleRemoveFromFavorites = async () => {
+    try {
+      const response = await removeFromFavorites(user.id, element._id);
+      if (response.message === 'Élément retiré des favoris avec succès') {
+        removeFromFavorisContext(element._id);
+        setEstFavori(false);  // Mise à jour de l'état après retrait des favoris
+      }
+    } catch (error) {
+      console.error("Erreur lors du retrait des favoris:", error);
+    }
+  };
+
+  const handleAddToFavorites = async () => {
+    try {
+      const response = await addToFavorites(user.id, element._id);
+      if (response.message === 'Élément ajouté aux favoris avec succès') {
+        addToFavorisContext(element._id);
+        setEstFavori(true);  // Mise à jour de l'état après ajout aux favoris
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout aux favoris:", error);
+    }
+  };
 
   return (
     <ThemedView style={styles.screen}>
       <ThemedView style={styles.headerContainer}>
-      <ThemedView style={styles.imageContainer}>
-        {element.assos.map((assos, index) => (
-          <Image key={index} source={images[assos]} style={styles.associationLogo} />
-        ))}
+        <ThemedView style={styles.imageContainer}>
+          {element.assos && (
+            <Image
+              key={element.assos}
+              source={images[element.assos]}
+              style={styles.associationLogo}
+            />
+          )}
+        </ThemedView>
+        <ThemedText type="title" style={styles.eventTitle}>{element.name}</ThemedText>
       </ThemedView>
-        <ThemedText type='title' style={styles.eventTitle}>{element.name}</ThemedText>
-      </ThemedView>
-
-
 
       <ThemedView style={styles.detailContainer}>
         <ThemedText style={styles.detailText}>
@@ -42,36 +139,41 @@ export default function eventDetail() {
       </ThemedView>
 
       <ThemedView style={styles.iconContainer}>
-        <Ionicons name="star" size={50} color="orange" />
+        <Ionicons
+          name={estFavoris ? "star" : "star-outline"}
+          size={50}
+          color="orange"
+          onPress={estFavoris ? handleRemoveFromFavorites : handleAddToFavorites}
+        />
         <ThemedText style={styles.descriptionText}>{element.description}</ThemedText>
       </ThemedView>
     </ThemedView>
   );
+
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#244B93",
-    padding: 20,  // Ajoute du padding pour espacer le contenu
+    padding: 20,
   },
   headerContainer: {
-    flexDirection: 'row',  // Pour aligner le logo et le titre
-    alignItems: 'center',   // Centrer verticalement
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 20,
-    backgroundColor : 'transparent'      // Espace sous l'en-tête
+    backgroundColor: 'transparent',
   },
   eventTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#E79140',
-    marginLeft: 10,  // Espace entre le logo et le titre
+    marginLeft: 10,
   },
   imageContainer: {
     flexDirection: 'row',
     marginBottom: 20,
-    alignItems : 'center',
- // Espace sous les logos
+    alignItems: 'center',
   },
   associationLogo: {
     height: 100,
@@ -82,13 +184,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     margin: 20,
     backgroundColor: 'transparent',
-    padding : 20
+    padding: 20,
   },
   detailText: {
     fontSize: 32,
     color: 'white',
     margin: 0,
-    padding : 20
+    padding: 20,
   },
   iconContainer: {
     alignItems: 'center',
@@ -98,6 +200,6 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     marginTop: 10,
-    paddingHorizontal: 20,  // Ajoute du padding autour de la description
-  }
+    paddingHorizontal: 20,
+  },
 });

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {useRouter} from 'expo-router'
 
 export default function Shotgun (){
   const [message, setMessage] = useState('');
