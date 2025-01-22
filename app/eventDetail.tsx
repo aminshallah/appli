@@ -39,38 +39,19 @@ export default function EventDetail() {
   const addToFavorisContext = (eventId) => {
     const updatedFavoris = [...user.favoris, eventId];
     const newUser = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-      idVR: user.idVR,
-      id: user.id,
-      familyId: user.familyId,
-      familyMembers : user.familyMembers,
-      familyName : user.familyName,
-      shotgun: user.shotgun,
-      role: user.role,
-      favoris : updatedFavoris
+      ...user,  // Garde toutes les propriétés existantes
+      favoris: updatedFavoris
     };
-    setUser(newUser)
+    setUser(newUser);
   };
-
-
+  
   const removeFromFavorisContext = (eventId) => {
     const updatedFavoris = user.favoris.filter((id) => id !== eventId);
     const newUser = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-      idVR: user.idVR,
-      id: user.id,
-      familyId: user.familyId,
-      familyMembers : user.familyMembers,
-      familyName : user.familyName,
-      shotgun: user.shotgun,
-      role: user.role,
-      favoris : updatedFavoris
+      ...user,  // Garde toutes les propriétés existantes
+      favoris: updatedFavoris
     };
-    setUser(newUser)
+    setUser(newUser);
   };
 
 
